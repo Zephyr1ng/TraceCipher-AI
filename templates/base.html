@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}TraceCipher AI{% endblock %}</title>
+  <link rel="stylesheet" href="{{ request.url_for('static', path='style.css') }}">
+</head>
+<body>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <a class="brand-card" href="/">
+        <strong>TraceCipher AI</strong>
+        <span class="brand-copy">AI 驱动的 JS 参数链路分析与脚本复现工具。</span>
+      </a>
+
+      <nav class="sidebar-nav">
+        {% block sidebar %}{% endblock %}
+      </nav>
+
+      <section class="sidebar-meta">
+        <div class="meta-card">
+          <span class="meta-label">当前边界</span>
+          <p>默认只做静态分析。网页抓取模式只覆盖页面直接引用 JS 与静态可发现 chunk，不模拟浏览器运行时环境。</p>
+        </div>
+      </section>
+    </aside>
+
+    <div class="workspace">
+      {% block hero %}
+      <header class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">授权安全测试</span>
+          <h1>TraceCipher AI</h1>
+          <p>分析前端参数生成流程，判断可逆性，并输出可执行脚本与技术报告。</p>
+        </div>
+        <div class="hero-note">
+          <span class="meta-label">分析流程</span>
+          <p>上传 JS 或补充网页 URL，指定目标参数后由大模型通读源码并分析参数流程，再生成脚本与验证结果。</p>
+        </div>
+      </header>
+      {% endblock %}
+
+      <main class="content-area">
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

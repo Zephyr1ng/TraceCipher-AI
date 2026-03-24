@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}任务进度 - {{ task.parameter_name }}{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar-group">
+  <span class="sidebar-label">任务导航</span>
+  <a class="sidebar-link anchor-link is-active" href="/tasks/{{ task.run_id }}">当前任务</a>
+  <a class="sidebar-link anchor-link" href="/tasks">返回任务中心</a>
+  <a class="sidebar-link anchor-link" href="/">新建分析</a>
+</div>
+{% endblock %}
+
+{% block hero %}
+<header class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">任务 {{ task.run_id }}</span>
+    <h1>{{ task.status_text }}</h1>
+    <p class="task-detail-step">{{ task.current_step }}</p>
+  </div>
+  <div class="hero-note">
+    <span class="meta-label">当前进度</span>
+    <div class="progress-track large-progress">
+      <div class="progress-fill" id="detail_progress_fill" style="width: {{ task.progress }}%;"></div>
+    </div>
+    <p id="detail_progress_text">当前进度 {{ task.progress }}%</p>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="section-head">
+    <h2>任务状态</h2>
+    <p>页面会自动轮询更新。任务完成后会直接跳转到分析结果页。运行中的任务可以先暂停，暂停后即可删除。</p>
+  </div>
+  <div class="task-detail-box">
+    <p><strong>目标参数：</strong><span id="task_parameter_name">{{ task.parameter_name }}</span></p>
+    <p><strong>当前状态：</strong><span id="task_status_text">{{ task.status_text }}</span></p>
+    <p><strong>当前步骤：</strong><span id="task_step_text" class="task-detail-step-text">{{ task.current_step }}</span></p>
+    <p><strong>创建时间：</strong>{{ task.created_at }}</p>
+    <p><strong>更新时间：</strong><span id="task_updated_at">{{ task.updated_at }}</span></p>
+    {% if task.error_message %}
+    <div class="task-error-shell" id="task_error_shell">
+      <p class="task-error" id="task_error_text">{{ task.error_message }}</p>
+      {% if task.error_raw_message %}
+      <details class="task-error-details" id="task_error_details">
+        <summary>查看原始错误信息</summary>
+        <pre class="task-error-raw" id="task_error_raw">{{ task.error_raw_message }}</pre>
+      </details>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="task-error-shell" id="task_error_shell" hidden>
+      <p class="task-error" id="task_error_text"></p>
+      <details class="task-error-details" id="task_error_details" hidden>
+        <summary>查看原始错误信息</summary>
+        <pre class="task-error-raw" id="task_error_raw"></pre>
+      </details>
+    </div>
+    {% endif %}
+    <div class="task-actions">
+      <form action="/tasks/{{ task.run_id }}/pause" method="post" onsubmit="return confirm('确认暂停这个任务吗？暂停后可以删除或稍后重新发起。');">
+        <button type="submit" class="secondary-btn" id="task_pause_btn" {% if not task.can_pause %}disabled title="只有运行中的任务才可以暂停"{% endif %}>暂停任务</button>
+      </form>
+      <form action="/tasks/{{ task.run_id }}/delete" method="post" onsubmit="return confirm('确认删除这个任务及其分析结果吗？');">
+        <button type="submit" class="danger-btn" id="task_delete_btn" {% if not task.can_delete %}disabled title="请先暂停任务后再删除"{% endif %}>删除任务</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% if llm_debug_files %}
+<section class="panel">
+  <div class="section-head">
+    <h2>LLM 调试产物</h2>
+    <p>这里会保留模型调用的请求体、响应体和错误响应，便于排查 GLM / DeepSeek 的稳定性问题。</p>
+  </div>
+  <ul class="plain-list">
+    {% for item in llm_debug_files %}
+    <li><a href="{{ item.url }}">{{ item.name }}</a></li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const runId = "{{ task.run_id }}";
+  const statusText = document.getElementById("task_status_text");
+  const stepText = document.getElementById("task_step_text");
+  const progressText = document.getElementById("detail_progress_text");
+  const progressFill = document.getElementById("detail_progress_fill");
+  const updatedAt = document.getElementById("task_updated_at");
+  const errorShell = document.getElementById("task_error_shell");
+  const errorText = document.getElementById("task_error_text");
+  const errorDetails = document.getElementById("task_error_details");
+  const errorRaw = document.getElementById("task_error_raw");
+
+  const statusMap = {
+    collecting: "收集源码中",
+    queued: "等待分析",
+    running: "分析中",
+    paused: "已暂停",
+    completed: "已完成",
+    failed: "失败",
+  };
+  const pauseButton = document.getElementById("task_pause_btn");
+  const deleteButton = document.getElementById("task_delete_btn");
+
+  function canPauseTask(status) {
+    return status === "collecting" || status === "queued" || status === "running";
+  }
+
+  function canDeleteTask(status) {
+    return status === "paused" || status === "completed" || status === "failed";
+  }
+
+  async function pollTask() {
+    const response = await fetch(`/api/tasks/${runId}`, { cache: "no-store" });
+    if (!response.ok) {
+      return;
+    }
+    const task = await response.json();
+    statusText.textContent = statusMap[task.status] || task.status;
+    stepText.textContent = task.current_step || "";
+    progressText.textContent = `当前进度 ${task.progress}%`;
+    progressFill.style.width = `${task.progress}%`;
+    updatedAt.textContent = new Date(task.updated_at).toLocaleString("zh-CN");
+    const hasError = Boolean(task.error_message);
+    errorShell.hidden = !hasError;
+    errorText.textContent = task.error_message || "";
+    if (errorDetails) {
+      const hasRaw = Boolean(task.error_raw_message);
+      errorDetails.hidden = !hasRaw;
+      if (errorRaw) {
+        errorRaw.textContent = task.error_raw_message || "";
+      }
+    }
+    if (pauseButton) {
+      pauseButton.disabled = !canPauseTask(task.status);
+      pauseButton.title = pauseButton.disabled ? "只有运行中的任务才可以暂停" : "";
+    }
+    if (deleteButton) {
+      deleteButton.disabled = !canDeleteTask(task.status);
+      deleteButton.title = deleteButton.disabled ? "请先暂停任务后再删除" : "";
+    }
+
+    if (task.status === "completed") {
+      window.location.href = `/runs/${runId}`;
+      return;
+    }
+    if (task.status !== "failed" && task.status !== "paused") {
+      setTimeout(pollTask, 1500);
+    }
+  }
+
+  setTimeout(pollTask, 1200);
+</script>
+{% endblock %}

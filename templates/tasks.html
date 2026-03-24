@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}任务中心 - TraceCipher AI{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar-group">
+  <span class="sidebar-label">任务中心</span>
+  <a class="sidebar-link anchor-link is-active" href="/tasks">全部任务</a>
+  <a class="sidebar-link anchor-link" href="/">新建分析</a>
+</div>
+{% endblock %}
+
+{% block hero %}
+<header class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">任务中心</span>
+    <h1>多任务列表</h1>
+    <p>这里统一查看所有任务的状态、进度、更新时间，并支持直接进入结果页、删除已结束任务，或基于旧任务重新发起。</p>
+  </div>
+  <div class="hero-note">
+    <span class="meta-label">使用方式</span>
+    <p>运行中的任务会自动刷新进度。已完成任务可以直接查看结果，失败任务可以保留排查，也可以删除。</p>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <div class="section-head">
+    <h2>全部任务</h2>
+    <p>列表会自动刷新。运行中的任务可以先暂停，暂停后即可删除或作为草稿重新发起。</p>
+  </div>
+
+  {% if tasks %}
+  <div class="task-list-shell">
+    <div class="task-list-head">
+      <span>任务</span>
+      <span>状态</span>
+      <span>进度</span>
+      <span>当前步骤</span>
+      <span>更新时间</span>
+      <span>操作</span>
+    </div>
+
+    <div class="task-list-body">
+      {% for task in tasks %}
+      <div class="task-row" data-task-row data-run-id="{{ task.run_id }}">
+        <div class="task-cell task-main">
+          <a class="task-name-link" href="{{ task.open_url }}" data-role="name_link">{{ task.parameter_name }}</a>
+          <div class="muted task-run-id">任务 {{ task.run_id }}</div>
+          {% if task.error_message %}
+          <div class="task-error-shell" data-role="error_shell">
+            <p class="task-error" data-role="error_message">{{ task.error_message }}</p>
+            {% if task.error_raw_message %}
+            <details class="task-error-details" data-role="error_details">
+              <summary>原始错误</summary>
+              <pre class="task-error-raw" data-role="error_raw_message">{{ task.error_raw_message }}</pre>
+            </details>
+            {% endif %}
+          </div>
+          {% else %}
+          <div class="task-error-shell" data-role="error_shell" hidden>
+            <p class="task-error" data-role="error_message"></p>
+            <details class="task-error-details" data-role="error_details" hidden>
+              <summary>原始错误</summary>
+              <pre class="task-error-raw" data-role="error_raw_message"></pre>
+            </details>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="task-cell task-status-cell">
+          <span class="badge" data-role="status_text">{{ task.status_text }}</span>
+        </div>
+
+        <div class="task-cell task-progress-cell">
+          <div class="progress-track">
+            <div class="progress-fill" data-role="progress_fill" style="width: {{ task.progress }}%;"></div>
+          </div>
+          <span class="muted" data-role="progress_text">进度 {{ task.progress }}%</span>
+        </div>
+
+        <div class="task-cell task-step-cell" data-role="current_step">{{ task.current_step }}</div>
+
+        <div class="task-cell task-updated-cell muted" data-role="updated_at">{{ task.updated_at }}</div>
+
+        <div class="task-cell task-actions">
+          <a class="secondary-link task-action-link" href="{{ task.open_url }}" data-role="view_link">
+            查看
+          </a>
+          <a class="secondary-link task-action-link" href="{{ task.draft_url }}">草稿</a>
+          <form action="/tasks/{{ task.run_id }}/pause" method="post" data-role="pause_form" onsubmit="return confirm('确认暂停这个任务吗？暂停后可以删除或稍后重新发起。');">
+            <button type="submit" class="secondary-btn" data-role="pause_btn" {% if not task.can_pause %}disabled title="只有运行中的任务才可以暂停"{% endif %}>暂停</button>
+          </form>
+          <form action="/tasks/{{ task.run_id }}/delete" method="post" data-role="delete_form" onsubmit="return confirm('确认删除这个任务及其分析结果吗？');">
+            <button type="submit" class="danger-btn" data-role="delete_btn" {% if not task.can_delete %}disabled title="请先暂停任务后再删除"{% endif %}>删除</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <p>当前还没有任务，先返回首页创建一个分析任务。</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const statusMap = {
+    collecting: "收集源码中",
+    queued: "等待分析",
+    running: "分析中",
+    paused: "已暂停",
+    completed: "已完成",
+    failed: "失败",
+  };
+
+  function canDeleteTask(status) {
+    return status === "paused" || status === "completed" || status === "failed";
+  }
+
+  function canPauseTask(status) {
+    return status === "collecting" || status === "queued" || status === "running";
+  }
+
+  async function refreshTaskRow(row) {
+    const runId = row.dataset.runId;
+    if (!runId) {
+      return;
+    }
+    const response = await fetch(`/api/tasks/${runId}`, { cache: "no-store" });
+    if (!response.ok) {
+      return;
+    }
+    const task = await response.json();
+    const nameLink = row.querySelector('[data-role="name_link"]');
+    const viewLink = row.querySelector('[data-role="view_link"]');
+    const statusText = row.querySelector('[data-role="status_text"]');
+    const progressFill = row.querySelector('[data-role="progress_fill"]');
+    const progressText = row.querySelector('[data-role="progress_text"]');
+    const currentStep = row.querySelector('[data-role="current_step"]');
+    const updatedAt = row.querySelector('[data-role="updated_at"]');
+    const errorShell = row.querySelector('[data-role="error_shell"]');
+    const errorMessage = row.querySelector('[data-role="error_message"]');
+    const errorDetails = row.querySelector('[data-role="error_details"]');
+    const errorRawMessage = row.querySelector('[data-role="error_raw_message"]');
+    const pauseButton = row.querySelector('[data-role="pause_btn"]');
+    const deleteButton = row.querySelector('[data-role="delete_btn"]');
+
+    const openUrl = task.result_ready ? `/runs/${runId}` : `/tasks/${runId}`;
+    nameLink.href = openUrl;
+    viewLink.href = openUrl;
+    viewLink.textContent = "查看";
+    statusText.textContent = statusMap[task.status] || task.status;
+    progressFill.style.width = `${task.progress}%`;
+    progressText.textContent = `进度 ${task.progress}%`;
+    currentStep.textContent = task.current_step || "";
+    updatedAt.textContent = new Date(task.updated_at).toLocaleString("zh-CN");
+    const hasError = Boolean(task.error_message);
+    errorShell.hidden = !hasError;
+    errorMessage.textContent = task.error_message || "";
+    if (errorDetails) {
+      const hasRaw = Boolean(task.error_raw_message);
+      errorDetails.hidden = !hasRaw;
+      if (errorRawMessage) {
+        errorRawMessage.textContent = task.error_raw_message || "";
+      }
+    }
+    pauseButton.disabled = !canPauseTask(task.status);
+    pauseButton.title = pauseButton.disabled ? "只有运行中的任务才可以暂停" : "";
+    deleteButton.disabled = !canDeleteTask(task.status);
+    deleteButton.title = deleteButton.disabled ? "请先暂停任务后再删除" : "";
+  }
+
+  async function refreshTaskRows() {
+    const rows = document.querySelectorAll("[data-task-row]");
+    await Promise.all(Array.from(rows, (row) => refreshTaskRow(row)));
+    setTimeout(refreshTaskRows, 2000);
+  }
+
+  if (document.querySelector("[data-task-row]")) {
+    setTimeout(refreshTaskRows, 1500);
+  }
+</script>
+{% endblock %}

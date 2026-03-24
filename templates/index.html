@@ -1,0 +1,626 @@
+{% extends "base.html" %}
+
+{% block title %}新建分析 - TraceCipher AI{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar-group">
+  <span class="sidebar-label">工作区</span>
+  <button type="button" class="sidebar-link is-active" data-panel-link data-target="panel-overview">总览</button>
+  <button type="button" class="sidebar-link" data-panel-link data-target="panel-context">参数上下文</button>
+  <button type="button" class="sidebar-link" data-panel-link data-target="panel-sources">JS 来源</button>
+  <button type="button" class="sidebar-link" data-panel-link data-target="panel-validation">校验样本</button>
+  <button type="button" class="sidebar-link" data-panel-link data-target="panel-prompts">提示词策略</button>
+  <button type="button" class="sidebar-link" data-panel-link data-target="panel-llm">大模型配置</button>
+</div>
+<div class="sidebar-group">
+  <span class="sidebar-label">任务</span>
+  <a class="sidebar-link anchor-link" href="/tasks">任务中心</a>
+</div>
+{% endblock %}
+
+{% block hero %}
+<header class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">新建分析</span>
+    <h1>静态分析工作台</h1>
+    <p>左侧目录切换不同设置区域。当前版本优先针对 DeepSeek 做两阶段优化：先全量通读，再聚焦精读，主结论由模型输出。</p>
+  </div>
+  <div class="hero-note">
+    <span class="meta-label">推荐方式</span>
+    <p>优先上传多文件或 zip。网页 URL 抓取仅作为补充，用来收集直接引用 JS 与静态可发现 chunk。</p>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<form class="workspace-form" action="/analyze" method="post" enctype="multipart/form-data">
+  <input type="hidden" name="draft_run_id" value="{{ defaults.draft_run_id }}">
+
+  {% if draft_context %}
+  <section class="panel draft-banner">
+    <div>
+      <strong>当前正在使用草稿任务</strong>
+      <p class="muted">草稿来源：任务 {{ draft_context.run_id }}，参数 {{ draft_context.parameter_name }}。</p>
+      {% if draft_context.can_reuse_sources %}
+      <p class="muted">如果你这次不重新上传源码，系统会自动复用该任务已收集的源码文件。</p>
+      {% else %}
+      <p class="muted">当前草稿会预填之前的参数与大模型配置；网页 URL 或外部 JS URL 会沿用原任务设置。</p>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="workspace-panel is-active" id="panel-overview" data-panel>
+    <div class="panel">
+      <div class="section-head">
+        <h2>分析总览</h2>
+        <p>这里是启动前摘要。真正填写内容时，使用左侧目录切到对应设置区块。</p>
+      </div>
+      <div class="overview-grid">
+        <article class="feature-card">
+          <span class="feature-index">01</span>
+          <h3>参数定位</h3>
+          <p>输入参数名、位置、用途说明或接口上下文，帮助大模型明确这次分析的真实目标。</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">02</span>
+          <h3>JS 收集</h3>
+          <p>支持多文件上传、zip 包导入、网页 URL 抓取与外部 JS URL 列表。</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">03</span>
+          <h3>样本校验</h3>
+          <p>可选提供已知明文与密文，用于对推断出的流程做自动一致性验证。</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">04</span>
+          <h3>提示词策略</h3>
+          <p>支持固定复用系统提示词与操作提示词，持续约束模型按你的逆向分析方法输出结构化结论。</p>
+        </article>
+        <article class="feature-card">
+          <span class="feature-index">05</span>
+          <h3>DeepSeek 主分析</h3>
+          <p>当前会先做全量通读，再做重点精读，最后结合结果复核压低分析抖动。</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace-panel" id="panel-context" data-panel hidden>
+    <div class="panel">
+      <div class="section-head">
+        <h2>参数上下文</h2>
+        <p>参数名是强制项。其余字段不是必填，但会显著影响静态排序结果。</p>
+      </div>
+      <div class="field-grid two-col">
+        <label>
+          <span>参数名</span>
+          <input type="text" name="parameter_name" placeholder="sign / token / password" value="{{ defaults.parameter_name }}" required>
+        </label>
+        <label>
+          <span>参数类型</span>
+          <select name="parameter_type">
+            <option value="unknown" {% if defaults.parameter_type == "unknown" %}selected{% endif %}>不确定</option>
+            <option value="password" {% if defaults.parameter_type == "password" %}selected{% endif %}>登录口令</option>
+            <option value="sign" {% if defaults.parameter_type == "sign" %}selected{% endif %}>签名</option>
+            <option value="token" {% if defaults.parameter_type == "token" %}selected{% endif %}>Token / 票据</option>
+            <option value="payload" {% if defaults.parameter_type == "payload" %}selected{% endif %}>业务密文字段</option>
+          </select>
+        </label>
+        <label>
+          <span>参数位置</span>
+          <select name="parameter_location">
+            <option value="unknown" {% if defaults.parameter_location == "unknown" %}selected{% endif %}>未知</option>
+            <option value="query" {% if defaults.parameter_location == "query" %}selected{% endif %}>查询参数</option>
+            <option value="body" {% if defaults.parameter_location == "body" %}selected{% endif %}>请求体</option>
+            <option value="header" {% if defaults.parameter_location == "header" %}selected{% endif %}>请求头</option>
+            <option value="cookie" {% if defaults.parameter_location == "cookie" %}selected{% endif %}>Cookie</option>
+          </select>
+        </label>
+        <label>
+          <span>关联 API 或用途说明</span>
+          <input type="text" name="api_context" placeholder="/api/login 或 登录接口签名" value="{{ defaults.api_context }}">
+        </label>
+      </div>
+      <label>
+        <span>参数补充说明</span>
+        <textarea name="parameter_hint" rows="4" placeholder="例如：登录时 password 会先做 AES，再 Base64。">{{ defaults.parameter_hint }}</textarea>
+      </label>
+    </div>
+  </section>
+
+  <section class="workspace-panel" id="panel-sources" data-panel hidden>
+    <div class="panel">
+      <div class="section-head">
+        <h2>JS 来源</h2>
+        <p>上传模式稳定性最高。网页 URL 模式只抓取当前页面直接引用 JS 与静态可发现 chunk。</p>
+      </div>
+      <div class="field-grid">
+        <label class="upload-box" for="uploads">
+          <span>上传 JS / ZIP</span>
+          <input class="sr-only-file" id="uploads" type="file" name="uploads" multiple accept=".js,.mjs,.cjs,.txt,.zip">
+          <div class="upload-shell">
+            <span class="upload-button">选择文件</span>
+            <span class="upload-status" id="upload_status">未选择文件，可多选或上传 zip</span>
+          </div>
+          <small>支持多选；zip 内会自动提取 `.js/.mjs/.cjs/.txt`。</small>
+        </label>
+        <label>
+          <span>网页 URL</span>
+          <input type="url" name="webpage_url" placeholder="https://target.example.com/login" value="{{ defaults.webpage_url }}">
+        </label>
+        <label>
+          <span>外部 JS URL 列表</span>
+          <textarea name="external_js_urls" rows="5" placeholder="每行一个，或用空格/逗号分隔">{{ defaults.external_js_urls }}</textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace-panel" id="panel-validation" data-panel hidden>
+    <div class="panel">
+      <div class="section-head">
+        <h2>校验样本</h2>
+        <p>提供样本对后，工具会在支持的算法范围内自动尝试加密方向或逆向方向校验。</p>
+      </div>
+      <div class="field-grid two-col">
+        <label>
+          <span>已知明文</span>
+          <textarea name="validation_plaintext" rows="8" placeholder="例如登录前的 password 明文">{{ defaults.validation_plaintext }}</textarea>
+        </label>
+        <label>
+          <span>已知密文</span>
+          <textarea name="validation_ciphertext" rows="8" placeholder="对应的请求参数值">{{ defaults.validation_ciphertext }}</textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace-panel" id="panel-llm" data-panel hidden>
+    <div class="panel">
+      <div class="section-head">
+        <h2>模型主分析配置</h2>
+        <p>当前先支持 `DeepSeek` 和 `GLM`。两者都走 OpenAI 兼容 `chat/completions`，但请求参数会按供应商差异自动调整。若选择 `GLM`，可自行决定是否开启 thinking 深度思考。</p>
+      </div>
+      <div class="llm-config-shell">
+        <div class="llm-config-card">
+          <div class="llm-summary-strip">
+            <div class="llm-summary-item">
+              <span class="meta-label">当前供应商</span>
+              <strong id="llm_summary_provider">{{ provider_presets[saved_llm.provider_name].label if saved_llm.provider_name in provider_presets else saved_llm.provider_name }}</strong>
+            </div>
+            <div class="llm-summary-item">
+              <span class="meta-label">当前模型</span>
+              <strong id="llm_summary_model">{{ saved_llm.model_name }}</strong>
+            </div>
+            <div class="llm-summary-item">
+              <span class="meta-label">输出预算</span>
+              <strong id="llm_summary_tokens">{{ saved_llm.max_tokens }}</strong>
+            </div>
+            <div class="llm-summary-item">
+              <span class="meta-label">自动复核</span>
+              <strong id="llm_summary_review">{{ "开启" if saved_llm.self_review_enabled else "关闭" }}</strong>
+            </div>
+            <div class="llm-summary-item">
+              <span class="meta-label">默认状态</span>
+              <strong class="{% if saved_llm.has_saved %}status-text-success{% else %}status-text-muted{% endif %}">
+                {% if saved_llm.has_saved %}已保存默认配置{% else %}尚未保存{% endif %}
+              </strong>
+            </div>
+          </div>
+
+          <div class="section-head llm-section-head">
+            <h3>连接与模型</h3>
+            <p>这里定义供应商、接口地址、模型名称与访问密钥。</p>
+          </div>
+          <div class="field-grid two-col">
+            <label>
+              <span>供应商</span>
+              <select name="provider_name" id="provider_name">
+                {% for key, preset in provider_presets.items() %}
+                <option value="{{ key }}" {% if saved_llm.provider_name == key %}selected{% endif %}>{{ preset.label }}</option>
+                {% endfor %}
+              </select>
+            </label>
+            <label>
+              <span>配置名称</span>
+              <input type="text" name="llm_profile_name" id="llm_profile_name" placeholder="例如：DeepSeek Reasoner 默认配置 / GLM 高精度" value="{{ saved_llm.profile_name }}">
+            </label>
+            <label>
+              <span>接口地址</span>
+              <input type="text" name="llm_base_url" id="llm_base_url" placeholder="https://api.openai.com/v1" value="{{ saved_llm.base_url }}" required>
+            </label>
+            <label>
+              <span>模型名称</span>
+              <input type="text" name="llm_model_name" id="llm_model_name" value="{{ saved_llm.model_name }}" {% if saved_llm.provider_name == "deepseek" %}readonly{% endif %}>
+              <small id="model_name_hint">
+                {% if saved_llm.provider_name == "deepseek" %}
+                当前 DeepSeek 默认固定使用 `deepseek-reasoner`。
+                {% else %}
+                GLM 推荐从 `glm-4.7` 或你实际可用的模型名开始，thinking 可按稳定性和速度需求自行切换。
+                {% endif %}
+              </small>
+            </label>
+            <label class="two-col-span">
+              <span>接口密钥</span>
+              <input type="password" name="llm_api_key" id="llm_api_key" placeholder="sk-..." value="{{ saved_llm.api_key }}" required>
+            </label>
+            <label id="glm_thinking_field" {% if saved_llm.provider_name != "glm" %}hidden{% endif %}>
+              <span>GLM 思考模式</span>
+              <select name="llm_glm_thinking_mode" id="llm_glm_thinking_mode">
+                <option value="enabled" {% if saved_llm.glm_thinking_enabled %}selected{% endif %}>开启 thinking</option>
+                <option value="disabled" {% if not saved_llm.glm_thinking_enabled %}selected{% endif %}>关闭 thinking</option>
+              </select>
+              <small>仅对 `GLM` 生效。开启更偏推理深度，关闭更偏响应速度和结构化稳定性。</small>
+            </label>
+          </div>
+
+          <div class="section-head llm-section-head">
+            <h3>推理预算</h3>
+            <p>这里控制模型并发、输出预算和自动复核，主要影响任务排队、结构化结果完整度与分析耗时。</p>
+          </div>
+          <div class="field-grid two-col">
+            <label>
+              <span>模型并发上限</span>
+              <input type="number" name="llm_max_concurrency" id="llm_max_concurrency" min="1" max="8" step="1" value="{{ saved_llm.max_concurrency }}">
+              <small>控制同时请求模型的任务数量。数值越大，多任务排队越少，但更容易触发供应商限流。</small>
+            </label>
+            <label>
+              <span>最大输出 Tokens</span>
+              <input type="number" name="llm_max_tokens" id="llm_max_tokens" min="1024" max="131072" step="256" value="{{ saved_llm.max_tokens }}">
+              <small>用于提升结构化输出完整度。DeepSeek 可先从 12000 左右开始，GLM-4.7 在 thinking 模式下建议从 16000 左右开始，再按稳定性逐步上调。</small>
+            </label>
+            <label>
+              <span>模型自审查与复核</span>
+              <select name="llm_self_review_mode" id="llm_self_review_mode">
+                <option value="enabled" {% if saved_llm.self_review_enabled %}selected{% endif %}>开启自动复核</option>
+                <option value="disabled" {% if not saved_llm.self_review_enabled %}selected{% endif %}>关闭自动复核</option>
+              </select>
+              <small>开启后会在主分析后自动执行自审查与冲突复核。关闭后分析速度更快，但结果可能保留未消除的字段冲突。</small>
+            </label>
+          </div>
+
+          <div class="llm-toolbar">
+            <div class="muted">
+              {% if saved_llm.has_saved %}
+              当前已保存默认模型配置，后续任务会自动复用。
+              {% else %}
+              当前还没有保存默认模型配置，建议先保存一次。
+              {% endif %}
+            </div>
+            <div class="llm-toolbar-actions">
+              <button type="button" class="secondary-btn" id="save_llm_settings_btn">保存默认配置并写入历史</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="save-status" id="save_llm_status" hidden></p>
+
+      <div class="llm-history-shell">
+        <div class="section-head">
+          <h3>历史配置</h3>
+          <p>历史配置会保存在本地，方便你在 `DeepSeek` 和 `GLM` 之间切换。</p>
+        </div>
+        {% if llm_history %}
+        <div class="llm-history-list">
+          {% for item in llm_history %}
+          <article class="llm-history-item {% if item.is_current %}is-current{% endif %}">
+            <div class="llm-history-main">
+              <div class="llm-history-head">
+                <strong>{{ item.profile_name }}</strong>
+                {% if item.is_current %}
+                <span class="badge">当前默认</span>
+                {% endif %}
+              </div>
+              <div class="badge-group">
+                <span class="badge">{{ item.provider_name }}</span>
+                <span class="badge">{{ item.model_name }}</span>
+                <span class="badge">复核 {{ "开启" if item.self_review_enabled else "关闭" }}</span>
+                {% if item.provider_name == "glm" %}
+                <span class="badge">Thinking {{ "开启" if item.glm_thinking_enabled else "关闭" }}</span>
+                {% endif %}
+                <span class="badge">Tokens {{ item.max_tokens }}</span>
+              </div>
+              <p class="muted">接口：{{ item.base_url }}</p>
+              <p class="muted">密钥：{{ item.api_key_masked }} ｜ 最近使用：{{ item.last_used_at }}</p>
+            </div>
+            <div class="llm-history-actions">
+              <button type="button" class="secondary-btn llm-history-load" data-entry-id="{{ item.entry_id }}">载入到表单</button>
+              <button type="button" class="secondary-btn llm-history-activate" data-entry-id="{{ item.entry_id }}">设为默认</button>
+              <button type="button" class="danger-btn llm-history-delete" data-entry-id="{{ item.entry_id }}">删除</button>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="muted">当前还没有历史配置。你保存一次默认配置后，这里会自动出现列表。</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <section class="workspace-panel" id="panel-prompts" data-panel hidden>
+    <div class="panel">
+      <div class="section-head">
+        <h2>提示词策略</h2>
+        <p>这里可以覆盖默认提示词，让 DeepSeek 更偏向你的 JS 逆向方法论。保存默认配置后，后续任务会持续复用这套提示词。</p>
+      </div>
+      <div class="field-grid">
+        <label>
+          <span>系统提示词</span>
+          <textarea name="llm_system_prompt" id="llm_system_prompt" rows="8" placeholder="你是一个优秀的 JS 逆向安全工程师...">{{ saved_llm.system_prompt }}</textarea>
+        </label>
+        <label>
+          <span>操作提示词</span>
+          <textarea name="llm_operator_prompt" id="llm_operator_prompt" rows="8" placeholder="请重点分析被混淆代码中的参数生成链路...">{{ saved_llm.operator_prompt }}</textarea>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <div class="panel action-bar">
+    <div>
+      <strong>准备提交任务</strong>
+      <p class="muted">填写完成后直接提交。最少需要参数名、至少一种 JS 来源，以及完整的大模型配置。</p>
+    </div>
+    <button type="submit" class="primary-btn">开始静态分析</button>
+  </div>
+</form>
+
+{% if recent_tasks %}
+<section class="panel">
+  <div class="section-head">
+    <h2>最近任务</h2>
+    <p>你可以直接跳到任务中心查看全部任务与进度。</p>
+  </div>
+  <div class="task-card-grid">
+    {% for task in recent_tasks %}
+    <a class="task-card" href="{{ task.open_url }}">
+      <div class="task-card-head">
+        <strong>{{ task.parameter_name }}</strong>
+        <span class="badge">{{ task.status_text }}</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width: {{ task.progress }}%;"></div>
+      </div>
+      <p class="muted">{{ task.current_step }}</p>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const providerPresets = {{ provider_presets | tojson }};
+  const llmHistoryMap = {{ llm_history_map | tojson }};
+  const providerSelect = document.getElementById("provider_name");
+  const profileNameInput = document.getElementById("llm_profile_name");
+  const baseInput = document.getElementById("llm_base_url");
+  const modelInput = document.getElementById("llm_model_name");
+  const modelHint = document.getElementById("model_name_hint");
+  const apiKeyInput = document.getElementById("llm_api_key");
+  const glmThinkingField = document.getElementById("glm_thinking_field");
+  const glmThinkingSelect = document.getElementById("llm_glm_thinking_mode");
+  const selfReviewSelect = document.getElementById("llm_self_review_mode");
+  const maxConcurrencyInput = document.getElementById("llm_max_concurrency");
+  const maxTokensInput = document.getElementById("llm_max_tokens");
+  const systemPromptInput = document.getElementById("llm_system_prompt");
+  const operatorPromptInput = document.getElementById("llm_operator_prompt");
+  const saveLlmButton = document.getElementById("save_llm_settings_btn");
+  const saveLlmStatus = document.getElementById("save_llm_status");
+  const uploadInput = document.getElementById("uploads");
+  const uploadStatus = document.getElementById("upload_status");
+  const panelLinks = document.querySelectorAll("[data-panel-link]");
+  const panels = document.querySelectorAll("[data-panel]");
+  const llmSummaryProvider = document.getElementById("llm_summary_provider");
+  const llmSummaryModel = document.getElementById("llm_summary_model");
+  const llmSummaryTokens = document.getElementById("llm_summary_tokens");
+  const llmSummaryReview = document.getElementById("llm_summary_review");
+
+  function activatePanel(targetId) {
+    const panelExists = [...panels].some((panel) => panel.id === targetId);
+    const nextTarget = panelExists ? targetId : "panel-overview";
+    panels.forEach((panel) => {
+      const active = panel.id === nextTarget;
+      panel.hidden = !active;
+      panel.classList.toggle("is-active", active);
+    });
+    panelLinks.forEach((button) => {
+      button.classList.toggle("is-active", button.dataset.target === nextTarget);
+    });
+    window.sessionStorage.setItem("activeWorkspacePanel", nextTarget);
+    const url = new URL(window.location.href);
+    url.searchParams.set("panel", nextTarget);
+    window.history.replaceState({}, "", url);
+  }
+
+  panelLinks.forEach((button) => {
+    button.addEventListener("click", () => activatePanel(button.dataset.target));
+  });
+
+  function redirectWithActivePanel(targetId) {
+    const url = new URL(window.location.href);
+    url.searchParams.set("panel", targetId);
+    window.location.assign(url.toString());
+  }
+
+  function refreshModelSummary() {
+    const provider = providerPresets[providerSelect.value];
+    if (llmSummaryProvider) {
+      llmSummaryProvider.textContent = provider ? provider.label : providerSelect.value;
+    }
+    if (llmSummaryModel) {
+      llmSummaryModel.textContent = modelInput.value || "-";
+    }
+    if (llmSummaryTokens) {
+      llmSummaryTokens.textContent = maxTokensInput.value || "-";
+    }
+    if (llmSummaryReview) {
+      llmSummaryReview.textContent = selfReviewSelect && selfReviewSelect.value === "disabled" ? "关闭" : "开启";
+    }
+  }
+
+  function applyProviderPreset(provider, forceModel = false) {
+    const preset = providerPresets[provider];
+    if (!preset) return;
+    if (!baseInput.value || forceModel) {
+      baseInput.value = preset.base_url || "";
+    }
+    if (forceModel || provider === "deepseek") {
+      modelInput.value = preset.model_name || "";
+    }
+    modelInput.readOnly = !!preset.model_readonly;
+    maxTokensInput.value = String(preset.max_tokens || 12000);
+    if (glmThinkingField) {
+      glmThinkingField.hidden = provider !== "glm";
+    }
+    if (selfReviewSelect && forceModel) {
+      selfReviewSelect.value = (preset.self_review_enabled === false) ? "disabled" : "enabled";
+    }
+    if (glmThinkingSelect && forceModel) {
+      glmThinkingSelect.value = (preset.glm_thinking_enabled === false) ? "disabled" : "enabled";
+    }
+    if (provider === "deepseek") {
+      modelHint.textContent = "当前 DeepSeek 默认固定使用 `deepseek-reasoner`。";
+      refreshModelSummary();
+      return;
+    }
+    modelHint.textContent = "GLM 推荐从 `glm-4.7` 或你实际可用的模型名开始，thinking 可按稳定性和速度需求自行切换。";
+    refreshModelSummary();
+  }
+
+  providerSelect.addEventListener("change", () => {
+    applyProviderPreset(providerSelect.value, true);
+  });
+  modelInput.addEventListener("input", refreshModelSummary);
+  maxTokensInput.addEventListener("input", refreshModelSummary);
+  if (selfReviewSelect) {
+    selfReviewSelect.addEventListener("change", refreshModelSummary);
+  }
+
+  uploadInput.addEventListener("change", () => {
+    const count = uploadInput.files ? uploadInput.files.length : 0;
+    if (!count) {
+      uploadStatus.textContent = "未选择文件，可多选或上传 zip";
+      return;
+    }
+    if (count === 1) {
+      uploadStatus.textContent = uploadInput.files[0].name;
+      return;
+    }
+    uploadStatus.textContent = `已选择 ${count} 个文件`;
+  });
+
+  saveLlmButton.addEventListener("click", async () => {
+    saveLlmStatus.hidden = true;
+    saveLlmStatus.textContent = "";
+
+    const formData = new FormData();
+    formData.append("provider_name", providerSelect.value);
+    formData.append("llm_profile_name", profileNameInput.value);
+    formData.append("llm_analysis_mode", providerSelect.value === "glm" ? "glm" : "reasoner");
+    formData.append("llm_base_url", baseInput.value);
+    formData.append("llm_model_name", modelInput.value);
+    formData.append("llm_api_key", apiKeyInput.value);
+    formData.append("llm_self_review_mode", selfReviewSelect ? selfReviewSelect.value : "enabled");
+    formData.append("llm_glm_thinking_mode", glmThinkingSelect ? glmThinkingSelect.value : "enabled");
+    formData.append("llm_max_concurrency", maxConcurrencyInput.value || "2");
+    formData.append("llm_max_tokens", maxTokensInput.value || String((providerPresets[providerSelect.value] || {}).max_tokens || 12000));
+    formData.append("llm_system_prompt", systemPromptInput.value);
+    formData.append("llm_operator_prompt", operatorPromptInput.value);
+
+    const response = await fetch("/settings/llm", {
+      method: "POST",
+      body: formData,
+    });
+    const payload = await response.json().catch(() => ({}));
+    saveLlmStatus.hidden = false;
+    if (response.ok) {
+      saveLlmStatus.classList.remove("is-error");
+      saveLlmStatus.classList.add("is-success");
+      saveLlmStatus.textContent = payload.message || "默认大模型配置已保存。";
+      window.setTimeout(() => redirectWithActivePanel("panel-llm"), 400);
+      return;
+    }
+    saveLlmStatus.classList.remove("is-success");
+    saveLlmStatus.classList.add("is-error");
+    saveLlmStatus.textContent = payload.detail || "保存默认大模型配置失败。";
+  });
+
+  document.querySelectorAll(".llm-history-load").forEach((button) => {
+    button.addEventListener("click", () => {
+      const entry = llmHistoryMap[button.dataset.entryId];
+      if (!entry) return;
+      providerSelect.value = entry.provider_name || "deepseek";
+      profileNameInput.value = entry.profile_name || "";
+      baseInput.value = entry.base_url || "";
+      modelInput.value = entry.model_name || "";
+      apiKeyInput.value = entry.api_key || "";
+      if (selfReviewSelect) {
+        selfReviewSelect.value = entry.self_review_enabled === false ? "disabled" : "enabled";
+      }
+      if (glmThinkingSelect) {
+        glmThinkingSelect.value = entry.glm_thinking_enabled === false ? "disabled" : "enabled";
+      }
+      maxConcurrencyInput.value = String(entry.max_concurrency || 2);
+      maxTokensInput.value = String(entry.max_tokens || (providerPresets[entry.provider_name || "deepseek"] || {}).max_tokens || 12000);
+      systemPromptInput.value = entry.system_prompt || "";
+      operatorPromptInput.value = entry.operator_prompt || "";
+      applyProviderPreset(providerSelect.value, false);
+      activatePanel("panel-llm");
+      saveLlmStatus.hidden = false;
+      saveLlmStatus.classList.remove("is-error");
+      saveLlmStatus.classList.add("is-success");
+      saveLlmStatus.textContent = "历史配置已载入到表单，可直接发起任务或再次保存为默认配置。";
+    });
+  });
+
+  document.querySelectorAll(".llm-history-activate").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const response = await fetch(`/settings/llm/history/${button.dataset.entryId}/activate`, {
+        method: "POST",
+      });
+      const payload = await response.json().catch(() => ({}));
+      saveLlmStatus.hidden = false;
+      if (response.ok) {
+        saveLlmStatus.classList.remove("is-error");
+        saveLlmStatus.classList.add("is-success");
+        saveLlmStatus.textContent = payload.message || "已设为默认配置。";
+        window.setTimeout(() => redirectWithActivePanel("panel-llm"), 400);
+        return;
+      }
+      saveLlmStatus.classList.remove("is-success");
+      saveLlmStatus.classList.add("is-error");
+      saveLlmStatus.textContent = payload.detail || "设置默认配置失败。";
+    });
+  });
+
+  document.querySelectorAll(".llm-history-delete").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const response = await fetch(`/settings/llm/history/${button.dataset.entryId}/delete`, {
+        method: "POST",
+      });
+      const payload = await response.json().catch(() => ({}));
+      saveLlmStatus.hidden = false;
+      if (response.ok) {
+        saveLlmStatus.classList.remove("is-error");
+        saveLlmStatus.classList.add("is-success");
+        saveLlmStatus.textContent = payload.message || "历史配置已删除。";
+        window.setTimeout(() => redirectWithActivePanel("panel-llm"), 300);
+        return;
+      }
+      saveLlmStatus.classList.remove("is-success");
+      saveLlmStatus.classList.add("is-error");
+      saveLlmStatus.textContent = payload.detail || "删除历史配置失败。";
+    });
+  });
+
+  const initialPanel = new URLSearchParams(window.location.search).get("panel")
+    || window.sessionStorage.getItem("activeWorkspacePanel")
+    || "panel-overview";
+  activatePanel(initialPanel);
+  refreshModelSummary();
+</script>
+{% endblock %}

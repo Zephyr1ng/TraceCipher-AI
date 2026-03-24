@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}分析结果 - {{ report.parameter_name }}{% endblock %}
+
+{% block sidebar %}
+<div class="sidebar-group">
+  <span class="sidebar-label">结果导航</span>
+  <a class="sidebar-link anchor-link is-active" href="#overview">分析结论</a>
+  <a class="sidebar-link anchor-link" href="#stack">调用流程</a>
+  <a class="sidebar-link anchor-link" href="#decrypt">在线解密</a>
+  <a class="sidebar-link anchor-link" href="#followup">继续追问</a>
+  <a class="sidebar-link anchor-link" href="#advanced">高级细节</a>
+</div>
+<div class="sidebar-group">
+  <span class="sidebar-label">任务</span>
+  <a class="sidebar-link anchor-link" href="/tasks">返回任务中心</a>
+</div>
+{% endblock %}
+
+{% block hero %}
+<header class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">任务 {{ report.run_id }}</span>
+    <h1>{{ status_text }}</h1>
+    <p>{{ status_summary }}</p>
+  </div>
+  <div class="hero-note">
+    <span class="meta-label">核心判断</span>
+    <div class="badge-group">
+      <span class="badge">{{ reversibility_text }}</span>
+      <span class="badge">{{ decryptability_text }}</span>
+      <span class="badge">置信度 {{ "%.2f"|format(report.confidence) }}</span>
+      <span class="badge">{{ script_type_text }}</span>
+      <span class="badge">{{ validation_text }}</span>
+    </div>
+  </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="cards-grid" id="overview">
+  <article class="panel compact outcome-panel outcome-{{ status_class }}">
+    <h3>是否成功分析</h3>
+    <p class="outcome-text">{{ status_text }}</p>
+    <p class="muted">{{ status_summary }}</p>
+  </article>
+  <article class="panel compact">
+    <h3>参数加密总结</h3>
+    <p>{{ report.summary }}</p>
+  </article>
+  <article class="panel compact">
+    <h3>核心操作链</h3>
+    <p>{{ operation_chain_text }}</p>
+  </article>
+  {% if key_material_items %}
+  <article class="panel compact">
+    <h3>关键密钥材料</h3>
+    <ul class="plain-list material-list">
+      {% for item in key_material_items %}
+      <li><strong>{{ item.label }}：</strong><code>{{ item.value }}</code></li>
+      {% endfor %}
+    </ul>
+  </article>
+  {% endif %}
+  <article class="panel compact">
+    <h3>任务信息</h3>
+    <ul class="plain-list">
+      <li><strong>参数名：</strong>{{ report.parameter_name }}</li>
+      <li><strong>参数位置：</strong>{{ report.parameter_location }}</li>
+      <li><strong>参数类型：</strong>{{ report.parameter_type }}</li>
+      <li><strong>接口上下文：</strong>{{ report.api_context or "未提供" }}</li>
+    </ul>
+  </article>
+</section>
+
+<section class="panel" id="stack">
+  <div class="section-head">
+    <h3>具体堆栈调用流程</h3>
+    <p>这里优先展示最直观的函数链式调用，再补充流程步骤。</p>
+  </div>
+  <div class="details-grid">
+    <div>
+      <h4>函数调用链</h4>
+      <p class="chain-line">{{ call_chain_text }}</p>
+      {% if top_candidate %}
+      <p class="muted">主要定位位置：{{ top_candidate.file_name }} 第 {{ top_candidate.line_number }} 行</p>
+      {% endif %}
+    </div>
+    <div>
+      <h4>流程步骤</h4>
+      <ol class="flow-list">
+        {% for step in report.flow_steps %}
+        <li>{{ step }}</li>
+        {% else %}
+        <li>当前没有恢复出稳定流程。</li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="decrypt">
+  <div class="section-head">
+    <h3>在线解密</h3>
+    <p>仅当当前结果属于可逆流程并且成功生成纯 Python 脚本时可用。</p>
+  </div>
+  {% if can_decrypt %}
+  <form class="decrypt-form" action="/runs/{{ report.run_id }}/decrypt" method="post">
+    <label>
+      <span>输入密文</span>
+      <textarea name="ciphertext" rows="5" placeholder="请输入需要解密的密文">{{ submitted_ciphertext }}</textarea>
+    </label>
+    <div class="submit-row">
+      <button type="submit" class="primary-btn">立即解密</button>
+    </div>
+  </form>
+  {% if decrypt_result %}
+  <div class="panel compact result-mini success-mini">
+    <h4>解密结果</h4>
+    <pre>{{ decrypt_result }}</pre>
+  </div>
+  {% endif %}
+  {% if decrypt_error %}
+  <div class="panel compact result-mini warning-panel">
+    <h4>解密失败</h4>
+    <p>{{ decrypt_error }}</p>
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="panel compact warning-panel">
+    <h4>当前不可直接解密</h4>
+    <p>{{ decrypt_unavailable_reason }}</p>
+  </div>
+  {% endif %}
+</section>
+
+<section class="panel" id="followup">
+  <div class="section-head">
+    <h3>继续追问</h3>
+    <p>这里会复用首轮分析会话摘要、关键函数片段和历史问答，不会重新走整套源码分析任务。</p>
+  </div>
+  <form class="decrypt-form" action="/runs/{{ report.run_id }}/ask" method="post" id="followup_form">
+    <label>
+      <span>追问问题</span>
+      <textarea name="question" rows="4" placeholder="例如：这个 AES key 是怎么派生出来的？为什么判断它可逆？">{{ followup_question }}</textarea>
+    </label>
+    <div class="submit-row">
+      <button type="submit" class="primary-btn" id="followup_submit_btn">提交追问</button>
+    </div>
+  </form>
+
+  {% if followup_answer %}
+  <div class="panel compact result-mini success-mini">
+    <h4>本轮回答</h4>
+    <pre>{{ followup_answer }}</pre>
+  </div>
+  {% endif %}
+  {% if followup_error %}
+  <div class="panel compact result-mini warning-panel">
+    <h4>追问失败</h4>
+    <p>{{ followup_error }}</p>
+  </div>
+  {% endif %}
+
+  {% if session.messages %}
+  <div class="session-chat">
+    {% for message in session.messages %}
+    <article class="session-message session-{{ message.role }}">
+      <div class="session-message-head">
+        <strong>{{ "你" if message.role == "user" else "分析会话" }}</strong>
+      </div>
+      <pre>{{ message.content }}</pre>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">当前还没有继续追问记录。首轮分析完成后，你可以直接围绕这次结果继续提问。</p>
+  {% endif %}
+</section>
+
+<section class="panel" id="advanced">
+  <div class="section-head">
+    <h3>高级细节</h3>
+    <p>当主结论不足以支撑判断时，再展开查看模型输出和脚本产物。</p>
+  </div>
+
+  {% if report.warnings %}
+  <details open>
+    <summary>注意事项</summary>
+    <ul class="plain-list">
+      {% for warning in report.warnings %}
+      <li>{{ warning }}</li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endif %}
+
+  <details>
+    <summary>脚本与校验</summary>
+    <ul class="plain-list">
+      <li><strong>脚本类型：</strong>{{ script_type_text }}</li>
+      <li><strong>校验状态：</strong>{{ validation_text }}</li>
+      {% for detail in report.validation.details %}
+      <li>{{ detail }}</li>
+      {% endfor %}
+      {% for note in report.generated_artifact.notes %}
+      <li>{{ note }}</li>
+      {% endfor %}
+      {% if report.generated_artifact.dependencies %}
+      <li><strong>依赖：</strong>{{ report.generated_artifact.dependencies | join(", ") }}</li>
+      {% endif %}
+      <li><a href="{{ report_url }}">下载 report.json</a></li>
+      {% for artifact in artifact_files %}
+      <li><a href="{{ artifact.url }}">下载 {{ artifact.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </details>
+
+  {% if llm_debug_files %}
+  <details>
+    <summary>LLM 调试产物</summary>
+    <ul class="plain-list">
+      {% for item in llm_debug_files %}
+      <li><a href="{{ item.url }}">{{ item.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endif %}
+
+  <details>
+    <summary>模型输出</summary>
+    <ul class="plain-list">
+      <li><strong>模型供应商：</strong>{{ report.llm.provider or "未记录" }}</li>
+      <li><strong>模型名称：</strong>{{ report.llm.model or "未记录" }}</li>
+      {% if report.llm.inferred_operations %}
+      <li><strong>模型推断操作链：</strong>{{ report.llm.inferred_operations | join(", ") }}</li>
+      {% endif %}
+      {% if report.llm.function_chain %}
+      <li><strong>模型推断函数链：</strong>{{ report.llm.function_chain | join(" -> ") }}</li>
+      {% endif %}
+      {% if report.llm.observed_facts %}
+      <li><strong>代码事实：</strong>{{ report.llm.observed_facts | join("；") }}</li>
+      {% endif %}
+      {% if report.llm.reasoning_notes %}
+      <li><strong>证据笔记：</strong>{{ report.llm.reasoning_notes | join("；") }}</li>
+      {% endif %}
+    </ul>
+    {% if report.llm.key_material %}
+    <h4>模型提取的关键材料</h4>
+    <ul class="plain-list">
+      {% for item in key_material_items %}
+      <li><strong>{{ item.label }}：</strong>{{ item.value }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="details-grid">
+      <div>
+        <h4>系统提示词</h4>
+        <pre>{{ report.llm.system_prompt or "未记录" }}</pre>
+      </div>
+      <div>
+        <h4>操作提示词</h4>
+        <pre>{{ report.llm.operator_prompt or "未记录" }}</pre>
+      </div>
+    </div>
+  </details>
+
+  {% if session.snippets %}
+  <details>
+    <summary>会话关键片段</summary>
+    {% for snippet in session.snippets %}
+    <div class="panel compact result-mini">
+      <h4>{{ snippet.label }}</h4>
+      <p class="muted">
+        {% if snippet.file_name %}{{ snippet.file_name }}{% endif %}
+        {% if snippet.line_hint %} 第 {{ snippet.line_hint }} 行{% endif %}
+        {% if snippet.function_name %} ｜ 函数 {{ snippet.function_name }}{% endif %}
+      </p>
+      <pre>{{ snippet.content }}</pre>
+    </div>
+    {% endfor %}
+  </details>
+  {% endif %}
+</section>
+
+<section class="back-row">
+  <a class="secondary-link" href="/tasks">返回任务中心</a>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const followupForm = document.getElementById("followup_form");
+  const followupSubmitBtn = document.getElementById("followup_submit_btn");
+  if (followupForm && followupSubmitBtn) {
+    followupForm.addEventListener("submit", () => {
+      followupSubmitBtn.disabled = true;
+      followupSubmitBtn.textContent = "正在追问...";
+    });
+  }
+</script>
+{% endblock %}
