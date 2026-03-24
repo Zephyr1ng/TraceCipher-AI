@@ -200,38 +200,16 @@ pip install -r requirements.txt
 - “解密”能力仅在识别出可逆算法或可逆变换时成立
 - 对签名、摘要、HMAC、不可逆 token 等流程，会明确标记为不可直接解密或证据不足
 
-## 本地数据说明
+## 部分功能见截图
+任务列表展示
+<img width="1432" height="774" alt="image" src="https://github.com/user-attachments/assets/52ec88ab-89b1-4855-b8c8-25f6ade8aece" />
+<img width="1441" height="727" alt="image" src="https://github.com/user-attachments/assets/cba96256-e230-4514-b80b-9fb007351b13" />
+用户可自定义提示词策略
+<img width="1440" height="726" alt="image" src="https://github.com/user-attachments/assets/0d9dfe09-aab7-46b6-b6ac-4b1c0f508a6a" />
+<img width="1438" height="729" alt="image" src="https://github.com/user-attachments/assets/287c8545-29bb-4b14-8737-573add8d752b" />
 
-以下内容属于运行期数据，不建议提交到 GitHub：
 
-- `data/runs/`
-- `data/settings/`
-- `.venv/`
 
-这些路径已经在 `.gitignore` 中忽略。
-
-## GitHub 开源建议
-
-建议在发布前至少确认下面几项：
-
-1. 选择许可证  
-   常见可选：`MIT`、`Apache-2.0`、`GPL-3.0`
-
-2. 补充仓库描述  
-   建议写清楚这是一个“AI 驱动的 JS 参数链路分析与脚本复现工具”
-
-3. 写清合法使用边界  
-   明确仅用于授权安全测试
-
-4. 检查敏感信息  
-   不要提交：
-   - 真实 API Key
-   - 本地模型配置
-   - 运行任务结果
-   - 临时调试文件
-
-5. 补项目截图  
-   最好在仓库首页补一张启动页或结果页截图
 
 ## 常见问题
 
@@ -258,10 +236,3 @@ pip install -r requirements.txt
 
 如果结果第一次没有收敛，就会触发后两轮，因此总耗时会上升。
 
-### 5. 默认模型配置保存在哪里？
-
-默认模型配置和历史配置保存在：
-
-- `data/settings/`
-
-这些文件只用于本地运行，不建议提交到仓库。
