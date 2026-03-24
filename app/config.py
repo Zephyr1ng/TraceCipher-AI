@@ -1,0 +1,36 @@
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+RUNS_DIR = DATA_DIR / "runs"
+SETTINGS_DIR = DATA_DIR / "settings"
+LLM_SETTINGS_PATH = SETTINGS_DIR / "llm_config.json"
+LLM_HISTORY_PATH = SETTINGS_DIR / "llm_history.json"
+STATIC_DIR = BASE_DIR / "static"
+TEMPLATES_DIR = BASE_DIR / "templates"
+APP_TIMEZONE = ZoneInfo("Asia/Shanghai")
+
+HTTP_TIMEOUT_SECONDS = 15.0
+HTTP_RETRY_ATTEMPTS = 3
+HTTP_RETRY_BASE_SECONDS = 2.0
+LLM_MAX_CONCURRENT_REQUESTS = 2
+LLM_MAX_CONCURRENT_REQUESTS_LIMIT = 8
+LLM_DEFAULT_MAX_TOKENS = 12000
+LLM_MIN_MAX_TOKENS = 1024
+LLM_MAX_TOKENS_LIMIT = 131072
+LLM_HISTORY_LIMIT = 16
+DEEPSEEK_BASE_URL = "https://api.deepseek.com"
+DEEPSEEK_DEFAULT_MODEL = "deepseek-reasoner"
+DEEPSEEK_REASONER_DEFAULT_MAX_TOKENS = 12000
+GLM_BASE_URL = "https://open.bigmodel.cn/api/paas/v4"
+GLM_DEFAULT_MODEL = "glm-4.7"
+GLM_DEFAULT_MAX_TOKENS = 16384
+MAX_DIRECT_JS = 30
+MAX_DISCOVERED_CHUNKS = 40
+MAX_SOURCE_BYTES = 1_500_000
+MAX_ARCHIVE_MEMBERS = 200
+
+RUNS_DIR.mkdir(parents=True, exist_ok=True)
+SETTINGS_DIR.mkdir(parents=True, exist_ok=True)
