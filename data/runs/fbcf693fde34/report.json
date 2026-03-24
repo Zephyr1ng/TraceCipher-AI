@@ -1,0 +1,131 @@
+{
+  "run_id": "fbcf693fde34",
+  "created_at": "2026-03-24T16:42:42.304114+08:00",
+  "parameter_name": "password",
+  "parameter_type": "unknown",
+  "parameter_location": "unknown",
+  "parameter_hint": null,
+  "api_context": null,
+  "webpage_url": null,
+  "external_js_urls": [],
+  "summary": "密码参数通过 AES-CBC 加密生成，密钥和初始化向量来自硬编码数字数组，经过字符串长度处理确保16字节，最终以Base64编码形式包含在请求载荷中。",
+  "reversibility": "potentially-reversible-encryption",
+  "confidence": 0.9,
+  "sources": [
+    {
+      "name": "obfuscated-password-aes.js",
+      "origin": "upload",
+      "source_url": null,
+      "saved_path": "/Users/zephyr/Security/Develop/js/data/runs/fbcf693fde34/sources/obfuscated-password-aes.js",
+      "discovered_from": null,
+      "notes": [
+        "复用自草稿任务 a8e30201682c 的已收集源码。"
+      ]
+    }
+  ],
+  "flow_steps": [
+    "已从草稿任务 a8e30201682c 复用 1 份源码。",
+    "输入明文密码",
+    "通过 _0x55 函数进行 AES-CBC 加密",
+    "密钥来自 _0x40 函数的 k 值，通过 _0x59 转换为字符串 \"288146ljx\"，再经 _0x4d 函数处理为16字节字符串 \"288146ljx288146l\"",
+    "初始化向量来自 _0x40 函数的 i 值，通过 _0x59 转换为字符串 \"288146\"，再经 _0x4d 函数处理为16字节字符串 \"2881462881462881\"",
+    "使用 CryptoJS.AES.encrypt 加密，配置为 CBC 模式和 Pkcs7 填充",
+    "加密结果转换为 Base64 编码字符串",
+    "作为 password 字段放入由 _0x32 函数构建的请求载荷"
+  ],
+  "candidates": [],
+  "generated_artifact": {
+    "script_type": "pure-python",
+    "files": [
+      "artifacts/replay.py"
+    ],
+    "runtime": "python3",
+    "dependencies": [
+      "pycryptodome"
+    ],
+    "notes": [
+      "AES 相关参数完全来自大模型结构化分析结果。"
+    ]
+  },
+  "validation": {
+    "status": "partial",
+    "details": [
+      "本次仅完成了结构合理性检查，尚未提供已知样本对进行强校验。"
+    ]
+  },
+  "llm": {
+    "used": true,
+    "provider": "deepseek",
+    "model": "deepseek-reasoner",
+    "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。\n\n硬性要求：所有自然语言输出必须使用简体中文。",
+    "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。\n\n现在请对上一轮结构化分析结果执行严格自审查。请先重新整理代码事实，再根据事实修正操作链、函数链、关键材料和最终结论。如果你发现上一轮结果与源码不一致，必须直接纠正，而不是沿用旧答案。如果源码中存在长度扩展、重复、截断、派生、parse、编码、摘要、签名或自定义字符串变换逻辑，请输出最终参与运算的真实值或明确承认无法确认。如果无法确认，请明确降级为 uncertain 或 report-only。",
+    "summary": "密码参数通过 AES-CBC 加密生成，密钥和初始化向量来自硬编码数字数组，经过字符串长度处理确保16字节，最终以Base64编码形式包含在请求载荷中。",
+    "reversibility": "potentially-reversible-encryption",
+    "confidence": 0.9,
+    "flow_steps": [
+      "输入明文密码",
+      "通过 _0x55 函数进行 AES-CBC 加密",
+      "密钥来自 _0x40 函数的 k 值，通过 _0x59 转换为字符串 \"288146ljx\"，再经 _0x4d 函数处理为16字节字符串 \"288146ljx288146l\"",
+      "初始化向量来自 _0x40 函数的 i 值，通过 _0x59 转换为字符串 \"288146\"，再经 _0x4d 函数处理为16字节字符串 \"2881462881462881\"",
+      "使用 CryptoJS.AES.encrypt 加密，配置为 CBC 模式和 Pkcs7 填充",
+      "加密结果转换为 Base64 编码字符串",
+      "作为 password 字段放入由 _0x32 函数构建的请求载荷"
+    ],
+    "warnings": [
+      "密钥和初始化向量硬编码在代码中，可能存在安全风险",
+      "本次结果已触发模型自审查复核。"
+    ],
+    "inferred_operations": [
+      "aes",
+      "base64"
+    ],
+    "function_chain": [
+      "_0x32",
+      "_0x55",
+      "_0x40",
+      "_0x59",
+      "_0x4d",
+      "_0x47",
+      "CryptoJS.AES.encrypt"
+    ],
+    "preferred_script_type": "pure-python",
+    "selected_candidates": [
+      "obfuscated-password-aes.js:103",
+      "obfuscated-password-aes.js:82",
+      "obfuscated-password-aes.js:60",
+      "obfuscated-password-aes.js:40",
+      "obfuscated-password-aes.js:51"
+    ],
+    "observed_facts": [
+      "函数 _0x32 在构建对象时，将 password 字段设置为 _0x55(_0x3e) 的返回值。",
+      "_0x55 函数调用 global[_0x2c(97)]（即 CryptoJS）的 AES.encrypt 方法。",
+      "_0x40 函数返回包含 k 和 i 的对象，k 由 _0x59([[50,56,56],[49,52,54],[108,106,120]]) 生成，i 由 _0x59([[50,56,56],[49,52,54]]) 生成。",
+      "_0x59 函数通过 String.fromCharCode 将数字数组转换为字符串。",
+      "_0x4d 函数对输入字符串执行 split(\"\").reverse().reverse().join(\"\") 操作，然后通过循环重复该字符串直到长度至少为指定值，最后截取前指定长度字符。",
+      "在 _0x55 函数中，加密配置指定 mode 为 CBC，padding 为 Pkcs7。",
+      "加密输出通过 ciphertext.toString(enc.Base64) 转换为 Base64 字符串。"
+    ],
+    "reasoning_notes": [
+      "代码中直接调用 CryptoJS.AES.encrypt 并指定 mode 为 CBC、padding 为 Pkcs7",
+      "密钥和 iv 的原始数据通过 _0x40 函数中的硬编码数字数组提供，通过 _0x59 函数解码为字符串",
+      "_0x4d 函数确保密钥和 iv 字符串长度为16字节，符合 AES-128 要求",
+      "输出使用 Base64 编码，在 _0x55 函数中明确指定"
+    ],
+    "key_material": {
+      "seed_key": "288146ljx",
+      "seed_iv": "288146",
+      "aes_key": "288146ljx288146l",
+      "aes_iv": "2881462881462881",
+      "aes_mode": "CBC",
+      "output": "base64",
+      "aes_key_bytes": "16",
+      "aes_iv_bytes": "16",
+      "derivation_steps": "将输入字符串通过 split(\"\").reverse().reverse().join(\"\") 得到原字符串 | 重复该字符串直到长度至少为指定值 | 截取前指定长度字符"
+    },
+    "raw_excerpt": "{\n  \"observed_facts\": [\n    \"函数 _0x32 在构建对象时，将 password 字段设置为 _0x55(_0x3e) 的返回值。\",\n    \"_0x55 函数调用 global[_0x2c(97)]（即 CryptoJS）的 AES.encrypt 方法。\",\n    \"_0x40 函数返回包含 k 和 i 的对象，k 由 _0x59([[50,56,56],[49,52,54],[108,106,120]]) 生成，i 由 _0x59([[50,56,56],[49,52,54]]) 生成。\",\n    \"_0x59 函数通过 String.fromCharCode 将数字数组转换为字符串。\",\n    \"_0x4d 函数对输入字符串执行 split(\\\"\\\").reverse().reverse().join(\\\"\\\") 操作，然后通过循环重复该字符串直到长度至少为指定值，最后截取前指定长度字符。\",\n    \"在 _0x55 函数中，加密配置指定 mode 为 CBC，padding 为 Pkcs7。\",\n    \"加密输出通过 ciphertext.toString(enc.Base64) 转换为 Base64 字符串。\"\n  ],\n  \"summary\": \"密码参数通过 AES-CBC 加密生成，密钥和初始化向量来自硬编码数字数组，经过字符串长度处理确保16字节，最终以Base64编码形式包含在请求载荷中。\",\n  \"reversibility\": \"potentially-reversible-encryption\",\n  \"confidence\": 0.9,\n  \"flow_steps\": [\n    \"输入明文密码\",\n    \"通过 _0x55 函数进行 AES-CBC 加密\",\n    \"密钥来自 _0x40 函数的 k 值，通过 _0x59 转换为字符串 \\\"288146ljx\\\"，再经 _0x4d 函数处理为16字节字符串 \\\"288146ljx288146l\\\"\",\n    \"初始化向量来自 _0x40 函数的 i 值，通过 _0x59 转换为字符串 \\\"288146\\\"，再经 _0x4d 函数处理为16字节字符串 \\\"2881462881462881\\\"\",\n    \"使用 CryptoJS.AES.encrypt 加密，配置为 CBC 模式和 Pkcs7 填充\",\n    \"加密结果转换为 Base64 编码字符串\",\n    \"作为 password 字段放入由 _0x32 函数构建的请求载荷\"\n  ],\n  \"warnings\": [\n    \"密钥和初始化向量硬编码在代码中，可能存在安全风险\"\n  ],\n  \"inferred_operations\": [\n    \"aes\",\n    \"base64\"\n  ],\n  \"function_chain\": [\n    \"_0x32\",\n    \"_0x55\",\n    \"_0x40\",\n    \"_0x59\",\n    \"_0x4d\",\n    \"_0x47\",\n    \"CryptoJS.AES.encrypt\"\n  ],\n  \"preferred_script_type\": \"pure-python\",\n  \"selected_candidates\": [\n    \"obfuscated-password-aes.js:103\",\n    \"obfuscated-password-aes.js:82\",\n    \"obfuscated-password-aes.js:60\",\n    \"obfuscated-password-aes.js:40\",\n    \"obfuscated-password-aes.js:51\"\n  ],\n  \"reasoning_notes\": [\n    \"代码中直接调用 CryptoJS.AES.encrypt 并指定 mode 为 CBC、padding 为 Pkcs7\",\n    \"密钥和 iv 的原始数据通过 _0x40 函数中的硬编码数字数组提供，通过 _0x59 函数解码为字符串\",\n    \"_0x4d 函数确保密钥和 iv 字符串长度为16字节，符合 AES-128 要求\",\n    \"输出使用 Base64 编码，在 _0x55 函数中明确指定\"\n  ],\n  \"key_material\": {\n    \"seed_key\": \"288146ljx\",\n    \"seed_iv\": \"288146\",\n    \"aes_key\": \"288146ljx288146l\",\n    \"aes_iv\": \"2881462881462881\",\n    \"aes_mo"
+  },
+  "warnings": [
+    "密钥和初始化向量硬编码在代码中，可能存在安全风险",
+    "本次结果已触发模型自审查复核。"
+  ]
+}

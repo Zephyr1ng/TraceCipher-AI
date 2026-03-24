@@ -1,0 +1,109 @@
+{
+  "run_id": "fbcf693fde34",
+  "created_at": "2026-03-24T16:43:02.863706+08:00",
+  "updated_at": "2026-03-24T16:43:02.863706+08:00",
+  "parameter_name": "password",
+  "summary": "密码参数通过 AES-CBC 加密生成，密钥和初始化向量来自硬编码数字数组，经过字符串长度处理确保16字节，最终以Base64编码形式包含在请求载荷中。",
+  "reversibility": "potentially-reversible-encryption",
+  "operation_chain": [
+    "aes",
+    "base64"
+  ],
+  "function_chain": [
+    "_0x32",
+    "_0x55",
+    "_0x40",
+    "_0x59",
+    "_0x4d",
+    "_0x47",
+    "CryptoJS.AES.encrypt"
+  ],
+  "observed_facts": [
+    "函数 _0x32 在构建对象时，将 password 字段设置为 _0x55(_0x3e) 的返回值。",
+    "_0x55 函数调用 global[_0x2c(97)]（即 CryptoJS）的 AES.encrypt 方法。",
+    "_0x40 函数返回包含 k 和 i 的对象，k 由 _0x59([[50,56,56],[49,52,54],[108,106,120]]) 生成，i 由 _0x59([[50,56,56],[49,52,54]]) 生成。",
+    "_0x59 函数通过 String.fromCharCode 将数字数组转换为字符串。",
+    "_0x4d 函数对输入字符串执行 split(\"\").reverse().reverse().join(\"\") 操作，然后通过循环重复该字符串直到长度至少为指定值，最后截取前指定长度字符。",
+    "在 _0x55 函数中，加密配置指定 mode 为 CBC，padding 为 Pkcs7。",
+    "加密输出通过 ciphertext.toString(enc.Base64) 转换为 Base64 字符串。"
+  ],
+  "key_material": {
+    "seed_key": "288146ljx",
+    "seed_iv": "288146",
+    "aes_key": "288146ljx288146l",
+    "aes_iv": "2881462881462881",
+    "aes_mode": "CBC",
+    "output": "base64",
+    "aes_key_bytes": "16",
+    "aes_iv_bytes": "16",
+    "derivation_steps": "将输入字符串通过 split(\"\").reverse().reverse().join(\"\") 得到原字符串 | 重复该字符串直到长度至少为指定值 | 截取前指定长度字符"
+  },
+  "snippets": [
+    {
+      "label": "重点定位：obfuscated-password-aes.js:103",
+      "file_name": "obfuscated-password-aes.js",
+      "line_hint": 103,
+      "content": "   89 |       iv: _0x35,\n   90 |       mode: _0x58[_0x2c(103)][_0x2c(104)],\n   91 |       padding: _0x58[_0x2c(105)][_0x2c(106)],\n   92 |     });\n   93 |     return _0x26[_0x2c(107)][_0x2c(108)](_0x58[_0x2c(100)][_0x2c(109)]);\n   94 |   }\n   95 | \n   96 |   function _0x3c() {\n   97 |     return (\n   98 |       Date[_0x2c(125)]().toString(16) +\n   99 |       Math[_0x2c(122)](Math[_0x2c(121)]() * 1000000).toString(16)\n  100 |     );\n  101 |   }\n  102 | \n  103 |   function _0x32(_0x41, _0x3e) {\n  104 |     var _0x21 = {};\n  105 |     _0x21[_0x2c(111)] = String(_0x41 == null ? \"\" : _0x41);\n  106 |     _0x21[_0x2c(110)] = _0x55(_0x3e);\n  107 |     _0x21[_0x2c(112)] = String(Date[_0x2c(125)]());\n  108 |     _0x21[_0x2c(113)] = _0x3c();\n  109 |     _0x21[_0x2c(114)] = \"web-obf-1.0.0\";\n  110 |     return _0x21;\n  111 |   }\n  112 | \n  113 |   function _0x34(_0x3b, _0x49) {\n  114 |     return _0x32(_0x3b, _0x49);\n  115 |   }\n  116 | \n  117 |   global[_0x2c(126)] = _0x32;"
+    },
+    {
+      "label": "重点定位：obfuscated-password-aes.js:82",
+      "file_name": "obfuscated-password-aes.js",
+      "line_hint": 82,
+      "content": "   68 |         [50, 56, 56],\n   69 |         [49, 52, 54]\n   70 |       ]),\n   71 |     };\n   72 |   }\n   73 | \n   74 |   function _0x47() {\n   75 |     var _0x38 = global[_0x2c(97)];\n   76 |     if (!_0x38) {\n   77 |       throw new Error(\"CryptoJS runtime is required.\");\n   78 |     }\n   79 |     return _0x38;\n   80 |   }\n   81 | \n   82 |   function _0x55(_0x4a) {\n   83 |     var _0x58 = _0x47();\n   84 |     var _0x4c = _0x40();\n   85 |     var _0x30 = _0x58[_0x2c(100)][_0x2c(101)];\n   86 |     var _0x2f = _0x30[_0x2c(102)](_0x4d(_0x4c.k, 16));\n   87 |     var _0x35 = _0x30[_0x2c(102)](_0x4d(_0x4c.i, 16));\n   88 |     var _0x26 = _0x58[_0x2c(98)][_0x2c(99)](_0x30[_0x2c(102)](String(_0x4a == null ? \"\" : _0x4a)), _0x2f, {\n   89 |       iv: _0x35,\n   90 |       mode: _0x58[_0x2c(103)][_0x2c(104)],\n   91 |       padding: _0x58[_0x2c(105)][_0x2c(106)],\n   92 |     });\n   93 |     return _0x26[_0x2c(107)][_0x2c(108)](_0x58[_0x2c(100)][_0x2c(109)]);\n   94 |   }\n   95 | \n   96 |   function _0x3c() {"
+    },
+    {
+      "label": "重点定位：obfuscated-password-aes.js:60",
+      "file_name": "obfuscated-password-aes.js",
+      "line_hint": 60,
+      "content": "   46 |       }\n   47 |     }\n   48 |     return _0x2a[_0x2c(117)](\"\");\n   49 |   }\n   50 | \n   51 |   function _0x4d(_0x1f, _0x50) {\n   52 |     var _0x33 = _0x1f[_0x2c(115)](\"\")[_0x2c(116)]()[_0x2c(116)]()[_0x2c(117)](\"\");\n   53 |     var _0x54 = \"\";\n   54 |     while (_0x54[_0x2c(118)] < _0x50) {\n   55 |       _0x54 += _0x33;\n   56 |     }\n   57 |     return _0x54[_0x2c(119)](0, _0x50);\n   58 |   }\n   59 | \n   60 |   function _0x40() {\n   61 |     return {\n   62 |       k: _0x59([\n   63 |         [50, 56, 56],\n   64 |         [49, 52, 54],\n   65 |         [108, 106, 120]\n   66 |       ]),\n   67 |       i: _0x59([\n   68 |         [50, 56, 56],\n   69 |         [49, 52, 54]\n   70 |       ]),\n   71 |     };\n   72 |   }\n   73 | \n   74 |   function _0x47() {"
+    },
+    {
+      "label": "重点定位：obfuscated-password-aes.js:40",
+      "file_name": "obfuscated-password-aes.js",
+      "line_hint": 40,
+      "content": "   26 |     \"push\",\n   27 |     \"random\",\n   28 |     \"floor\",\n   29 |     \"Math\",\n   30 |     \"Date\",\n   31 |     \"now\",\n   32 |     \"buildLoginPayload\",\n   33 |     \"submitLogin\",\n   34 |   ];\n   35 | \n   36 |   function _0x2c(_0x1a) {\n   37 |     return _0x6f[_0x1a - 97];\n   38 |   }\n   39 | \n   40 |   function _0x59(_0x31) {\n   41 |     var _0x2a = [];\n   42 |     for (var _0x13 = 0; _0x13 < _0x31.length; _0x13 += 1) {\n   43 |       var _0x5d = _0x31[_0x13];\n   44 |       for (var _0x4b = 0; _0x4b < _0x5d.length; _0x4b += 1) {\n   45 |         _0x2a[_0x2c(120)](String.fromCharCode(_0x5d[_0x4b]));\n   46 |       }\n   47 |     }\n   48 |     return _0x2a[_0x2c(117)](\"\");\n   49 |   }\n   50 | \n   51 |   function _0x4d(_0x1f, _0x50) {\n   52 |     var _0x33 = _0x1f[_0x2c(115)](\"\")[_0x2c(116)]()[_0x2c(116)]()[_0x2c(117)](\"\");\n   53 |     var _0x54 = \"\";\n   54 |     while (_0x54[_0x2c(118)] < _0x50) {"
+    },
+    {
+      "label": "重点定位：obfuscated-password-aes.js:51",
+      "file_name": "obfuscated-password-aes.js",
+      "line_hint": 51,
+      "content": "   37 |     return _0x6f[_0x1a - 97];\n   38 |   }\n   39 | \n   40 |   function _0x59(_0x31) {\n   41 |     var _0x2a = [];\n   42 |     for (var _0x13 = 0; _0x13 < _0x31.length; _0x13 += 1) {\n   43 |       var _0x5d = _0x31[_0x13];\n   44 |       for (var _0x4b = 0; _0x4b < _0x5d.length; _0x4b += 1) {\n   45 |         _0x2a[_0x2c(120)](String.fromCharCode(_0x5d[_0x4b]));\n   46 |       }\n   47 |     }\n   48 |     return _0x2a[_0x2c(117)](\"\");\n   49 |   }\n   50 | \n   51 |   function _0x4d(_0x1f, _0x50) {\n   52 |     var _0x33 = _0x1f[_0x2c(115)](\"\")[_0x2c(116)]()[_0x2c(116)]()[_0x2c(117)](\"\");\n   53 |     var _0x54 = \"\";\n   54 |     while (_0x54[_0x2c(118)] < _0x50) {\n   55 |       _0x54 += _0x33;\n   56 |     }\n   57 |     return _0x54[_0x2c(119)](0, _0x50);\n   58 |   }\n   59 | \n   60 |   function _0x40() {\n   61 |     return {\n   62 |       k: _0x59([\n   63 |         [50, 56, 56],\n   64 |         [49, 52, 54],\n   65 |         [108, 106, 120]"
+    },
+    {
+      "label": "函数片段：_0x32",
+      "file_name": "obfuscated-password-aes.js",
+      "function_name": "_0x32",
+      "line_hint": 103,
+      "content": "   85 |     var _0x30 = _0x58[_0x2c(100)][_0x2c(101)];\n   86 |     var _0x2f = _0x30[_0x2c(102)](_0x4d(_0x4c.k, 16));\n   87 |     var _0x35 = _0x30[_0x2c(102)](_0x4d(_0x4c.i, 16));\n   88 |     var _0x26 = _0x58[_0x2c(98)][_0x2c(99)](_0x30[_0x2c(102)](String(_0x4a == null ? \"\" : _0x4a)), _0x2f, {\n   89 |       iv: _0x35,\n   90 |       mode: _0x58[_0x2c(103)][_0x2c(104)],\n   91 |       padding: _0x58[_0x2c(105)][_0x2c(106)],\n   92 |     });\n   93 |     return _0x26[_0x2c(107)][_0x2c(108)](_0x58[_0x2c(100)][_0x2c(109)]);\n   94 |   }\n   95 | \n   96 |   function _0x3c() {\n   97 |     return (\n   98 |       Date[_0x2c(125)]().toString(16) +\n   99 |       Math[_0x2c(122)](Math[_0x2c(121)]() * 1000000).toString(16)\n  100 |     );\n  101 |   }\n  102 | \n  103 |   function _0x32(_0x41, _0x3e) {\n  104 |     var _0x21 = {};\n  105 |     _0x21[_0x2c(111)] = String(_0x41 == null ? \"\" : _0x41);\n  106 |     _0x21[_0x2c(110)] = _0x55(_0x3e);\n  107 |     _0x21[_0x2c(112)] = String(Date[_0x2c(125)]());\n  108 |     _0x21[_0x2c(113)] = _0x3c();\n  109 |     _0x21[_0x2c(114)] = \"web-obf-1.0.0\";\n  110 |     return _0x21;\n  111 |   }\n  112 | \n  113 |   function _0x34(_0x3b, _0x49) {\n  114 |     return _0x32(_0x3b, _0x49);\n  115 |   }\n  116 | \n  117 |   global[_0x2c(126)] = _0x32;\n  118 |   global[_0x2c(127)] = function(_0x3d, _0x56) {\n  119 |     return _0x34(_0x3d, _0x56);\n  120 |   };\n  121 | "
+    },
+    {
+      "label": "函数片段：_0x55",
+      "file_name": "obfuscated-password-aes.js",
+      "function_name": "_0x55",
+      "line_hint": 82,
+      "content": "   64 |         [49, 52, 54],\n   65 |         [108, 106, 120]\n   66 |       ]),\n   67 |       i: _0x59([\n   68 |         [50, 56, 56],\n   69 |         [49, 52, 54]\n   70 |       ]),\n   71 |     };\n   72 |   }\n   73 | \n   74 |   function _0x47() {\n   75 |     var _0x38 = global[_0x2c(97)];\n   76 |     if (!_0x38) {\n   77 |       throw new Error(\"CryptoJS runtime is required.\");\n   78 |     }\n   79 |     return _0x38;\n   80 |   }\n   81 | \n   82 |   function _0x55(_0x4a) {\n   83 |     var _0x58 = _0x47();\n   84 |     var _0x4c = _0x40();\n   85 |     var _0x30 = _0x58[_0x2c(100)][_0x2c(101)];\n   86 |     var _0x2f = _0x30[_0x2c(102)](_0x4d(_0x4c.k, 16));\n   87 |     var _0x35 = _0x30[_0x2c(102)](_0x4d(_0x4c.i, 16));\n   88 |     var _0x26 = _0x58[_0x2c(98)][_0x2c(99)](_0x30[_0x2c(102)](String(_0x4a == null ? \"\" : _0x4a)), _0x2f, {\n   89 |       iv: _0x35,\n   90 |       mode: _0x58[_0x2c(103)][_0x2c(104)],\n   91 |       padding: _0x58[_0x2c(105)][_0x2c(106)],\n   92 |     });\n   93 |     return _0x26[_0x2c(107)][_0x2c(108)](_0x58[_0x2c(100)][_0x2c(109)]);\n   94 |   }\n   95 | \n   96 |   function _0x3c() {\n   97 |     return (\n   98 |       Date[_0x2c(125)]().toString(16) +\n   99 |       Math[_0x2c(122)](Math[_0x2c(121)]() * 1000000).toString(16)\n  100 |     );"
+    },
+    {
+      "label": "函数片段：_0x40",
+      "file_name": "obfuscated-password-aes.js",
+      "function_name": "_0x40",
+      "line_hint": 60,
+      "content": "   42 |     for (var _0x13 = 0; _0x13 < _0x31.length; _0x13 += 1) {\n   43 |       var _0x5d = _0x31[_0x13];\n   44 |       for (var _0x4b = 0; _0x4b < _0x5d.length; _0x4b += 1) {\n   45 |         _0x2a[_0x2c(120)](String.fromCharCode(_0x5d[_0x4b]));\n   46 |       }\n   47 |     }\n   48 |     return _0x2a[_0x2c(117)](\"\");\n   49 |   }\n   50 | \n   51 |   function _0x4d(_0x1f, _0x50) {\n   52 |     var _0x33 = _0x1f[_0x2c(115)](\"\")[_0x2c(116)]()[_0x2c(116)]()[_0x2c(117)](\"\");\n   53 |     var _0x54 = \"\";\n   54 |     while (_0x54[_0x2c(118)] < _0x50) {\n   55 |       _0x54 += _0x33;\n   56 |     }\n   57 |     return _0x54[_0x2c(119)](0, _0x50);\n   58 |   }\n   59 | \n   60 |   function _0x40() {\n   61 |     return {\n   62 |       k: _0x59([\n   63 |         [50, 56, 56],\n   64 |         [49, 52, 54],\n   65 |         [108, 106, 120]\n   66 |       ]),\n   67 |       i: _0x59([\n   68 |         [50, 56, 56],\n   69 |         [49, 52, 54]\n   70 |       ]),\n   71 |     };\n   72 |   }\n   73 | \n   74 |   function _0x47() {\n   75 |     var _0x38 = global[_0x2c(97)];\n   76 |     if (!_0x38) {\n   77 |       throw new Error(\"CryptoJS runtime is required.\");\n   78 |     }"
+    },
+    {
+      "label": "函数片段：_0x59",
+      "file_name": "obfuscated-password-aes.js",
+      "function_name": "_0x59",
+      "line_hint": 40,
+      "content": "   22 |     \"reverse\",\n   23 |     \"join\",\n   24 |     \"length\",\n   25 |     \"slice\",\n   26 |     \"push\",\n   27 |     \"random\",\n   28 |     \"floor\",\n   29 |     \"Math\",\n   30 |     \"Date\",\n   31 |     \"now\",\n   32 |     \"buildLoginPayload\",\n   33 |     \"submitLogin\",\n   34 |   ];\n   35 | \n   36 |   function _0x2c(_0x1a) {\n   37 |     return _0x6f[_0x1a - 97];\n   38 |   }\n   39 | \n   40 |   function _0x59(_0x31) {\n   41 |     var _0x2a = [];\n   42 |     for (var _0x13 = 0; _0x13 < _0x31.length; _0x13 += 1) {\n   43 |       var _0x5d = _0x31[_0x13];\n   44 |       for (var _0x4b = 0; _0x4b < _0x5d.length; _0x4b += 1) {\n   45 |         _0x2a[_0x2c(120)](String.fromCharCode(_0x5d[_0x4b]));\n   46 |       }\n   47 |     }\n   48 |     return _0x2a[_0x2c(117)](\"\");\n   49 |   }\n   50 | \n   51 |   function _0x4d(_0x1f, _0x50) {\n   52 |     var _0x33 = _0x1f[_0x2c(115)](\"\")[_0x2c(116)]()[_0x2c(116)]()[_0x2c(117)](\"\");\n   53 |     var _0x54 = \"\";\n   54 |     while (_0x54[_0x2c(118)] < _0x50) {\n   55 |       _0x54 += _0x33;\n   56 |     }\n   57 |     return _0x54[_0x2c(119)](0, _0x50);\n   58 |   }"
+    },
+    {
+      "label": "函数片段：_0x4d",
+      "file_name": "obfuscated-password-aes.js",
+      "function_name": "_0x4d",
+      "line_hint": 51,
+      "content": "   33 |     \"submitLogin\",\n   34 |   ];\n   35 | \n   36 |   function _0x2c(_0x1a) {\n   37 |     return _0x6f[_0x1a - 97];\n   38 |   }\n   39 | \n   40 |   function _0x59(_0x31) {\n   41 |     var _0x2a = [];\n   42 |     for (var _0x13 = 0; _0x13 < _0x31.length; _0x13 += 1) {\n   43 |       var _0x5d = _0x31[_0x13];\n   44 |       for (var _0x4b = 0; _0x4b < _0x5d.length; _0x4b += 1) {\n   45 |         _0x2a[_0x2c(120)](String.fromCharCode(_0x5d[_0x4b]));\n   46 |       }\n   47 |     }\n   48 |     return _0x2a[_0x2c(117)](\"\");\n   49 |   }\n   50 | \n   51 |   function _0x4d(_0x1f, _0x50) {\n   52 |     var _0x33 = _0x1f[_0x2c(115)](\"\")[_0x2c(116)]()[_0x2c(116)]()[_0x2c(117)](\"\");\n   53 |     var _0x54 = \"\";\n   54 |     while (_0x54[_0x2c(118)] < _0x50) {\n   55 |       _0x54 += _0x33;\n   56 |     }\n   57 |     return _0x54[_0x2c(119)](0, _0x50);\n   58 |   }\n   59 | \n   60 |   function _0x40() {\n   61 |     return {\n   62 |       k: _0x59([\n   63 |         [50, 56, 56],\n   64 |         [49, 52, 54],\n   65 |         [108, 106, 120]\n   66 |       ]),\n   67 |       i: _0x59([\n   68 |         [50, 56, 56],\n   69 |         [49, 52, 54]"
+    }
+  ],
+  "messages": []
+}

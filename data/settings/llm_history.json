@@ -1,0 +1,315 @@
+[
+  {
+    "entry_id": "b669161e9a66",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "self_review_enabled": false,
+      "glm_thinking_enabled": true,
+      "max_concurrency": 1,
+      "max_tokens": 16384,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T17:02:39.625000+08:00",
+    "updated_at": "2026-03-24T17:02:39.625000+08:00",
+    "last_used_at": "2026-03-24T17:02:39.625000+08:00"
+  },
+  {
+    "entry_id": "f0b3f20aacb9",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "self_review_enabled": false,
+      "glm_thinking_enabled": false,
+      "max_concurrency": 1,
+      "max_tokens": 16384,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T16:58:01.622615+08:00",
+    "updated_at": "2026-03-24T16:58:01.622615+08:00",
+    "last_used_at": "2026-03-24T16:58:01.622615+08:00"
+  },
+  {
+    "entry_id": "2fa8eb07ae39",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "glm",
+      "self_review_enabled": false,
+      "glm_thinking_enabled": false,
+      "max_concurrency": 1,
+      "max_tokens": 16384,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T16:57:48.128328+08:00",
+    "updated_at": "2026-03-24T16:57:48.128328+08:00",
+    "last_used_at": "2026-03-24T16:57:48.128328+08:00"
+  },
+  {
+    "entry_id": "adb3d67bf63e",
+    "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+    "llm": {
+      "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+      "provider_name": "deepseek",
+      "base_url": "https://api.deepseek.com",
+      "model_name": "deepseek-reasoner",
+      "api_key": "sk-b4720494b5e44910a20ab58a056f5a99",
+      "analysis_mode": "reasoner",
+      "self_review_enabled": false,
+      "glm_thinking_enabled": false,
+      "max_concurrency": 4,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T16:52:08.375551+08:00",
+    "updated_at": "2026-03-24T16:52:08.375551+08:00",
+    "last_used_at": "2026-03-24T16:52:08.375551+08:00"
+  },
+  {
+    "entry_id": "5af5ac83d391",
+    "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+    "llm": {
+      "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+      "provider_name": "deepseek",
+      "base_url": "https://api.deepseek.com",
+      "model_name": "deepseek-reasoner",
+      "api_key": "sk-b4720494b5e44910a20ab58a056f5a99",
+      "analysis_mode": "reasoner",
+      "glm_thinking_enabled": false,
+      "max_concurrency": 4,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T16:29:49.237644+08:00",
+    "updated_at": "2026-03-24T16:35:59.008935+08:00",
+    "last_used_at": "2026-03-24T16:35:59.008935+08:00"
+  },
+  {
+    "entry_id": "86253739d6ab",
+    "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+    "llm": {
+      "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+      "provider_name": "deepseek",
+      "base_url": "https://api.deepseek.com",
+      "model_name": "deepseek-reasoner",
+      "api_key": "sk-b4720494b5e44910a20ab58a056f5a99",
+      "analysis_mode": "reasoner",
+      "glm_thinking_enabled": false,
+      "max_concurrency": 2,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T15:24:05.902499+08:00",
+    "updated_at": "2026-03-24T16:08:43.737602+08:00",
+    "last_used_at": "2026-03-24T16:08:43.737602+08:00"
+  },
+  {
+    "entry_id": "b964a917faa8",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "glm_thinking_enabled": true,
+      "max_concurrency": 1,
+      "max_tokens": 120064,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T15:18:24.702956+08:00",
+    "updated_at": "2026-03-24T15:18:24.702956+08:00",
+    "last_used_at": "2026-03-24T15:18:24.702956+08:00"
+  },
+  {
+    "entry_id": "3cae365e11fe",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "glm",
+      "glm_thinking_enabled": true,
+      "max_concurrency": 1,
+      "max_tokens": 120064,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T15:17:56.206459+08:00",
+    "updated_at": "2026-03-24T15:17:56.206459+08:00",
+    "last_used_at": "2026-03-24T15:17:56.206459+08:00"
+  },
+  {
+    "entry_id": "2d8d350c5921",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "glm_thinking_enabled": false,
+      "max_concurrency": 2,
+      "max_tokens": 120064,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T15:15:17.173455+08:00",
+    "updated_at": "2026-03-24T15:15:17.173455+08:00",
+    "last_used_at": "2026-03-24T15:15:17.173455+08:00"
+  },
+  {
+    "entry_id": "4bae7d79ab67",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "max_concurrency": 2,
+      "max_tokens": 120064,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T14:37:04.505743+08:00",
+    "updated_at": "2026-03-24T15:02:59.219445+08:00",
+    "last_used_at": "2026-03-24T15:02:59.219445+08:00"
+  },
+  {
+    "entry_id": "86c81a62d03a",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "max_concurrency": 2,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T13:43:59.602876+08:00",
+    "updated_at": "2026-03-24T14:04:15.908245+08:00",
+    "last_used_at": "2026-03-24T14:04:15.908245+08:00"
+  },
+  {
+    "entry_id": "c13acf3715b4",
+    "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+    "llm": {
+      "profile_name": "deepseek-reasoner · 2026-03-24 11:11:21",
+      "provider_name": "deepseek",
+      "base_url": "https://api.deepseek.com",
+      "model_name": "deepseek-reasoner",
+      "api_key": "sk-b4720494b5e44910a20ab58a056f5a99",
+      "analysis_mode": "reasoner",
+      "max_concurrency": 2,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T11:11:21.296979+08:00",
+    "updated_at": "2026-03-24T12:56:40.657707+08:00",
+    "last_used_at": "2026-03-24T12:56:40.657707+08:00"
+  },
+  {
+    "entry_id": "651aca6a0664",
+    "profile_name": "glm-4.7 · 2026-03-24 11:31:59",
+    "llm": {
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "reasoner",
+      "max_concurrency": 1,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T11:31:59.172864+08:00",
+    "updated_at": "2026-03-24T12:26:26.888384+08:00",
+    "last_used_at": "2026-03-24T12:26:26.888384+08:00"
+  },
+  {
+    "entry_id": "678267e17209",
+    "profile_name": "glm-4.7 · 2026-03-24 11:32:35",
+    "llm": {
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "0e24f8b4b27e4972b16a28dd110caf24.5yiMe631kTQ69Rc9",
+      "analysis_mode": "glm",
+      "max_concurrency": 1,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T11:32:35.376602+08:00",
+    "updated_at": "2026-03-24T11:32:35.376602+08:00",
+    "last_used_at": "2026-03-24T11:32:35.376602+08:00"
+  },
+  {
+    "entry_id": "f06d5393034f",
+    "profile_name": "glm-4.7 · 2026-03-24 11:27:59",
+    "llm": {
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "78a96bc773344f4eb0176abe00da85e9.qWQSota6GHlel30s",
+      "analysis_mode": "reasoner",
+      "max_concurrency": 2,
+      "max_tokens": 12032,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T11:27:59.625332+08:00",
+    "updated_at": "2026-03-24T11:27:59.625332+08:00",
+    "last_used_at": "2026-03-24T11:27:59.625332+08:00"
+  },
+  {
+    "entry_id": "42223060d74f",
+    "profile_name": "glm-4.7 · 2026-03-24 11:26:52",
+    "llm": {
+      "provider_name": "glm",
+      "base_url": "https://open.bigmodel.cn/api/paas/v4",
+      "model_name": "glm-4.7",
+      "api_key": "78a96bc773344f4eb0176abe00da85e9.qWQSota6GHlel30s",
+      "analysis_mode": "glm",
+      "max_concurrency": 2,
+      "max_tokens": 12000,
+      "system_prompt": "你是一名资深的 JavaScript 逆向安全工程师，仅服务于授权安全测试场景。\r\n你的任务是分析可能经过压缩、混淆或拆包的 JavaScript，判断指定请求参数是如何生成的。\r\n启发式候选只作为线索，不要把它们当成事实。你必须基于提供的代码片段、函数摘录和上下文证据做保守判断。\r\n\r\n你必须完成以下目标：\r\n1. 找出最可能的参数生成链路。\r\n2. 判断该链路是否可逆。\r\n3. 推断关键操作顺序，例如 JSON、URL 编码、Base64、摘要、HMAC、AES 等。\r\n4. 只有在证据明确时才提取字面量 key、iv、secret。\r\n5. 判断是否可以生成稳定的纯 Python 复现脚本。\r\n6. 证据不足时必须明确表达不确定性。\r\n\r\n硬性要求：\r\n- 所有自然语言输出必须使用简体中文。\r\n- 只返回严格 JSON，不要使用 Markdown 代码块。",
+      "operator_prompt": "优先分析与目标参数名、接口上下文和请求构造直接相关的代码路径。\r\n如果代码经过混淆，请结合调用链、请求组装、加密标记、附近常量和函数职责来推断真实意图。\r\n如果参数属于 sign、token、hash 这类字段，除非证据明确表明其使用了可逆密码算法，否则不要把它描述为“可解密”。\r\n输出必须足够结构化，能够直接用于生成复现脚本与结果展示。\r\n对于aes类型加密，如果分析结果中发现密钥有长度限制或要求，要严格校验长度后再进行输出。"
+    },
+    "created_at": "2026-03-24T11:26:52.202298+08:00",
+    "updated_at": "2026-03-24T11:26:52.202298+08:00",
+    "last_used_at": "2026-03-24T11:26:52.202298+08:00"
+  }
+]
