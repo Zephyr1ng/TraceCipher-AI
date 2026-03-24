@@ -1,0 +1,1 @@
+!function(g){if(g.CryptoJS){return;}g.CryptoJS={enc:{Utf8:{parse:function(v){return v;}}},mode:{CBC:"CBC"},pad:{Pkcs7:"Pkcs7"},AES:{encrypt:function(v,key,opt){return{toString:function(){return "stub::"+String(v)+"::"+String(key)+"::"+String(opt&&opt.iv);}}}}};}(window);
