@@ -201,15 +201,26 @@ pip install -r requirements.txt
 - 对签名、摘要、HMAC、不可逆 token 等流程，会明确标记为不可直接解密或证据不足
 
 ## 部分功能见截图
+
 任务列表展示
+
 <img width="1432" height="774" alt="image" src="https://github.com/user-attachments/assets/52ec88ab-89b1-4855-b8c8-25f6ade8aece" />
-<img width="1441" height="727" alt="image" src="https://github.com/user-attachments/assets/cba96256-e230-4514-b80b-9fb007351b13" />
+
+模型分析结果展示
+
+<img width="1444" height="786" alt="image" src="https://github.com/user-attachments/assets/3e229f86-421a-4d21-969b-933ba9d7ba84" />
+
 用户可自定义提示词策略
+
+<img width="1441" height="727" alt="image" src="https://github.com/user-attachments/assets/cba96256-e230-4514-b80b-9fb007351b13" />
+
+参数上下文配置
+
 <img width="1440" height="726" alt="image" src="https://github.com/user-attachments/assets/0d9dfe09-aab7-46b6-b6ac-4b1c0f508a6a" />
+
+大模型配置
+
 <img width="1438" height="729" alt="image" src="https://github.com/user-attachments/assets/287c8545-29bb-4b14-8737-573add8d752b" />
-
-
-
 
 ## 常见问题
 
